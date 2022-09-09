@@ -1,5 +1,7 @@
 package tech.lucaschaves.lcmeta.services;
 
+import java.text.DecimalFormat;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -11,16 +13,12 @@ import com.twilio.type.PhoneNumber;
 import tech.lucaschaves.lcmeta.entities.Sale;
 import tech.lucaschaves.lcmeta.repositories.SaleRepository;
 
-//Service que peguei pronto no github do evento, o service é para os sms enviado pelo Twilio
-
 @Service
 public class SmsService {
 	
 	@Autowired
 	private SaleRepository repository;
 
-	//As váriaves são parametros que estão no application.properties, dados sensiveis que será passado pelo Twilio
-	//o @Value vai buscar na variavel de ambiente oq foi especificado no parametro
 	@Value("${twilio.sid}")
 	private String twilioSid;
 
@@ -35,16 +33,12 @@ public class SmsService {
 
 	public void sendSms(Long saleId) {
 		
-		//Buscando um sale pelo id e o get é para pegar ele, não só encontrar
 		Sale sale = repository.findById(saleId).get();
 		
-		//Fazendo uma string onde vamos pegar o mes e contacater com uma barra e o ano, "05/2022" por exemplo
 		String date = sale.getDate().getMonthValue() + "/" + sale.getDate().getYear();
 		
 		String msg = "O vendedor " + sale.getSellerName() + " foi destaque em " + date
-			    + " com um total de R$ " + String.format("%.0f", sale.getAmount());
-		
-		//podemos verificar que utilizamos todas as variaveis
+			    + " com um total de R$ " + new DecimalFormat("#,##0.00").format(sale.getAmount());
 		
 		Twilio.init(twilioSid, twilioKey);
 
