@@ -1,5 +1,7 @@
 package tech.lucaschaves.lcmeta.services;
 
+import java.text.DecimalFormat;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -49,8 +51,9 @@ public class SmsService {
 		+ String.format("%.2f", sale.getAmount()); //formatando para ter duas casinhas
 		*/
 		
-		String msg = String.format("O vendedor %s foi destaque em %s com um total de R$ %.2f", sale.getSellerName(), date, sale.getAmount());
-
+		String msg = "O vendedor " + sale.getSellerName() + " foi destaque em " + date
+			    + " com um total de R$ " + new DecimalFormat("#,##0.00").format(sale.getAmount());
+		
 		//podemos verificar que utilizamos todas as variaveis
 		
 		Twilio.init(twilioSid, twilioKey);
