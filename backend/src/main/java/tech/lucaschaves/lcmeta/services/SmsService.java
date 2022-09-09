@@ -41,11 +41,15 @@ public class SmsService {
 		//Fazendo uma string onde vamos pegar o mes e contacater com uma barra e o ano, "05/2022" por exemplo
 		String date = sale.getDate().getMonthValue() + "/" + sale.getDate().getYear();
 		
+		/*
 		//Montando a mensagem, com texto e concatenação
 		String msg = "O vendedor " + sale.getSellerName() 
 		+ " foi destaque em " + date 
 		+ " com um total de R$ " 
 		+ String.format("%.2f", sale.getAmount()); //formatando para ter duas casinhas
+		*/
+		
+		String msg = String.format("O vendedor %s foi destaque em %s com um total de R$ %.2f", sale.getSellerName(), date, sale.getAmount());
 
 		//podemos verificar que utilizamos todas as variaveis
 		
