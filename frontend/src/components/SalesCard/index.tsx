@@ -3,6 +3,8 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
+import { Sale } from "../../models/sale"
+import { BASE_URL } from "../../utils/request"
 
 import { NotificationButton } from '../NotificationButton'
 import './styles.css'
@@ -11,19 +13,22 @@ export function SalesCard() {
 
     //Macete para criar uma data de X anos atrás (para ser de X dias, apague o vezes alguma coisa)
     const min = new Date(new Date().setDate(new Date().getDate() - (365 * 2)));
-    
+
     const [minDate, setMinDate] = useState(min);
     const [maxDate, setMaxDate] = useState(new Date());
-    
+
+    //para armazenar a lista de sales e estamos tipando o useState para uma lista de Sale
+    const [sales, setSales] = useState<Sale[]>([]);
+
     //React Hook - useEffect
     //useEffect( ( função ) => { ainda faz parte da função}, [ lista de dependencias])
-
-    useEffect( () => {
-        axios.get('http://localhost:8080/sales')
+    useEffect(() => {
+        axios.get(`${BASE_URL}/sales`)
             .then(response => {
-                console.log(response.data)            //promisses
+                setSales(response.data.content); //promisses
+                console.log(setSales);
             })
-    }, [] );
+    }, []);
 
     return (
         <div className="lcmeta-card">
@@ -61,45 +66,26 @@ export function SalesCard() {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td className="show992">#341</td>
-                            <td className="show576">08/07/2022</td>
-                            <td>Anakin</td>
-                            <td className="show992">15</td>
-                            <td className="show992">11</td>
-                            <td>R$ 55300.00</td>
-                            <td>
-                                <div className="lcmeta-red-btn-container">
-                                    <NotificationButton />
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td className="show992">#341</td>
-                            <td className="show576">08/07/2022</td>
-                            <td>Anakin</td>
-                            <td className="show992">15</td>
-                            <td className="show992">11</td>
-                            <td>R$ 55300.00</td>
-                            <td>
-                                <div className="lcmeta-red-btn-container">
-                                    <NotificationButton />
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td className="show992">#341</td>
-                            <td className="show576">08/07/2022</td>
-                            <td>Anakin</td>
-                            <td className="show992">15</td>
-                            <td className="show992">11</td>
-                            <td>R$ 55300.00</td>
-                            <td>
-                                <div className="lcmeta-red-btn-container">
-                                    <NotificationButton />
-                                </div>
-                            </td>
-                        </tr>
+                        {/* Mapeie o SALES e para cara voltar q der na lista, vamos chamar o item de sale, e para cada sale renderize uma lista */}
+                        {sales.map(sale => {
+                            return (
+                                <tr key={sale.id}>
+                                    <td className="show992">{sale.id}</td>
+                                    {/* Para formatar a data, botamos então que é uma nova data infornado a data do sale, e chamamos a função toLocaleDateString*/}
+                                    <td className="show576">{new Date(sale.date).toLocaleDateString()}</td>
+                                    <td>{sale.sellerName}</td>
+                                    <td className="show992">{sale.visited}</td>
+                                    <td className="show992">{sale.deals}</td>
+                                    {/* Esse toFixed(2) é para informar que o numero tem duas casa decimal*/}
+                                    <td>R$ {sale.amount.toFixed(2)}</td> 
+                                    <td>
+                                        <div className="lcmeta-red-btn-container">
+                                            <NotificationButton />
+                                        </div>
+                                    </td>
+                                </tr>
+                            )
+                        })}
                     </tbody>
 
                 </table>
