@@ -1,5 +1,6 @@
 //import do DatePicker e do CSS
-import { useState } from "react"
+import axios from "axios"
+import { useEffect, useState } from "react"
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
 
@@ -10,10 +11,19 @@ export function SalesCard() {
 
     //Macete para criar uma data de X anos atrás (para ser de X dias, apague o vezes alguma coisa)
     const min = new Date(new Date().setDate(new Date().getDate() - (365 * 2)));
-
+    
     const [minDate, setMinDate] = useState(min);
     const [maxDate, setMaxDate] = useState(new Date());
+    
+    //React Hook - useEffect
+    //useEffect( ( função ) => { ainda faz parte da função}, [ lista de dependencias])
 
+    useEffect( () => {
+        axios.get('http://localhost:8080/sales')
+            .then(response => {
+                console.log(response.data)            //promisses
+            })
+    }, [] );
 
     return (
         <div className="lcmeta-card">
