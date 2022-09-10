@@ -12,7 +12,7 @@ import './styles.css'
 export function SalesCard() {
 
     //Macete para criar uma data de X anos atrás (para ser de X dias, apague o vezes alguma coisa)
-    const min = new Date(new Date().setDate(new Date().getDate() - (365 * 2)));
+    const min = new Date(new Date().setDate(new Date().getDate() - (365 * 1)));
 
     const [minDate, setMinDate] = useState(min);
     const [maxDate, setMaxDate] = useState(new Date());
@@ -23,12 +23,15 @@ export function SalesCard() {
     //React Hook - useEffect
     //useEffect( ( função ) => { ainda faz parte da função}, [ lista de dependencias])
     useEffect(() => {
-        axios.get(`${BASE_URL}/sales`)
+
+        const dmin = minDate.toISOString().slice(0, 10); //slice é recortar, e queremos os 10 caracteres dps da posição 0
+        const dmax = maxDate.toISOString().slice(0, 10);
+
+        axios.get(`${BASE_URL}/sales?minDate=${dmin}&maxDate=${dmax}`)
             .then(response => {
                 setSales(response.data.content); //promisses
-                console.log(setSales);
             })
-    }, []);
+    }, [ minDate, maxDate]);
 
     return (
         <div className="lcmeta-card">
@@ -80,7 +83,8 @@ export function SalesCard() {
                                     <td>R$ {sale.amount.toFixed(2)}</td> 
                                     <td>
                                         <div className="lcmeta-red-btn-container">
-                                            <NotificationButton />
+                                            {/* passando parametro para o botão */}
+                                            <NotificationButton saleId={sale.id} />
                                         </div>
                                     </td>
                                 </tr>
